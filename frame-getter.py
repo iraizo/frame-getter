@@ -2,24 +2,30 @@ import glob
 import os
 import uuid 
 from os import system
+from pathlib import Path
+import time
 
-names = []
-dir_input = os.path.dirname(os.path.abspath(__file__)) + "\\input"
-dir_output = os.path.dirname(os.path.abspath(__file__)) + "\\output"
+output = []
+dir_input = os.path.dirname(os.path.abspath(__file__)) + "\\input\\"
+dir_output = os.path.dirname(os.path.abspath(__file__)) + "\\output\\"
+directory = os.getcwd()
+videos = glob.glob("./input/*.MP4")
 
-videos = glob.glob("./*.MP4")
+# rename all files random
+files = os.listdir(directory + "\\input")
 
-for video in videos:
-    names.append(video[2:])
-
-name = uuid.uuid1().int
-
-print(dir_input)
-
-#for video in names:
-    #print(f'ffmpeg -i "C:\\Users\\raizo\\Desktop\\frames\{video}" -vf fps=1/240 output/{name}.png'))
+for index, file in enumerate(files):
+    name = uuid.uuid1().int
+    os.rename(os.path.join(directory + "\\input", file), os.path.join(directory + "\\input", ''.join([str(uuid.uuid1().int), '.mp4'])))
+    
 
 
-#for video in names:
-#    name = uuid.uuid1().int
-#    print(system(f'ffmpeg -i "C:\\Users\\raizo\\Desktop\\frames\\{video}" -vf fps=1/240 output/{name}.png'
+
+files = os.listdir(directory + "\\input") # update files if needed, probaly not
+
+
+# actually run ffmpeg
+for video in files:
+  name = uuid.uuid1().int
+  print(system(f'ffmpeg -i "C:\\Users\\raizo\\Desktop\\frames\\input\\{video}" -vf "select=\'if(not(floor(mod(t,5)))*lt(ld(1),1),st(1,1)+st(2,n)+st(3,t));if(eq(ld(1),1)*lt(n,ld(2)+8),1,if(trunc(t-ld(3)),st(1,0)))\'" -vsync 0 {dir_output}{name}_out%d.png'))
+
